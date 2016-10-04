@@ -55,9 +55,6 @@ function buildRequests(rows)
     else if (request['input'] == 'N') {
       request['decision'] = 'Denied';
     }
-    else {
-      request['decision'] = 'None';
-    }
     request['owner'] = 'Jennifer';
     requests.push(request);
     Logger.log('Added student '+request['usersName']+'; Response: '+request['decision']);
@@ -127,7 +124,7 @@ function writeResponse(record) {
       "enrollment@berklee.edu, bursar@berklee.edu",
     }
     // Prevents sending duplicate emails and emails to non-approved rows. 
-    var message = 'Student ID# '+request['userID']'+
+    var message = 'Student ID# '+request['userID']+
                 '\n\nDear '+request['usersName']+',\n\nYour request for part-time status ('+
                 request['creditHours']+' credit-hours) beginning in '+request['term']+
                 ' has been approved.\n\nAs part of your request for part-time status you agreed to or acknowledged '+
@@ -170,7 +167,7 @@ function sendReminders(owners) {
       var d = new Date();
       var currentDate = d.toLocaleDateString(); //"December 19, 2014" for instance  
       var currentTime = d.toLocaleTimeString(); // "12:35 PM", for instance
-      var message = "To the Office of the Registrar:\n\n'+
+      var message = 'To the Office of the Registrar:\n\n'+
         'This is an automated notification from the Part-Time '+
         'Student Authorization Form response center that you have '+
         'part-time authorization requests to approve. Please navigate '+
@@ -178,7 +175,7 @@ function sendReminders(owners) {
         'the Approved column for every student request. \n\nThis email '+
         'reminder will not be sent again until there are new form submissions. '+
         'Please be sure to keep the Approved column updated for each authorization '+
-        'request that arrives. \n\nKind regards, \n\nPSM";
+        'request that arrives. \n\nKind regards, \n\nPSM';
       MailApp.sendEmail(owner['email'], subject, message, options);
       SpreadsheetApp.flush();
       // Make sure the cell is updated right away in case the script is interrupted
