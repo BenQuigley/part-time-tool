@@ -56,9 +56,6 @@ function buildRequests(rows)
     else if (request['input'] == 'N') {
       request['decision'] = 'Denied';
     }
-    else {
-      request['decision'] = 'None';
-    }
     if (request['userInitial'] <= 'j') {
       request['owner'] = 'Sarah';
     }
