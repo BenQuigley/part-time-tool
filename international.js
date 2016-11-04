@@ -34,22 +34,22 @@ function buildRequests(rows)
     if (rows[i][2] == ''){continue;}
     var row = rows[i];    
     var request = {}
-    request['input'] = row[0];
-    request['notes'] = row[1];
-    request['applicationDate'] = row[2];
-    request['username'] = row[3];
+    request['input'] = row[0]; //A
+    request['notes'] = row[1]; //B
+    request['applicationDate'] = row[2]; //C
+    request['username'] = row[3]; //D
     request['userInitial'] = row[3].slice(1, 2);
-    request['userID'] = row[4];
-    request['usersName'] = row[5];
-    request['creditHours'] = row[6];
-    request['term'] = row[7];
-    request['SAPAck'] = row[11];
-    request['fin'] = row[12];
-    request['finAck'] = row[13];
-    request['plansAck'] = row[14];
-    request['nationalityStatus'] = row[15];
-    request['isEmailSent'] = row[16];
-    request['reminderEmailSentTo'] = row[17];
+    request['userID'] = row[4]; //E
+    request['usersName'] = row[5]; //F
+    request['creditHours'] = row[6]; //G
+    request['term'] = row[7]; //H
+    request['SAPAck'] = row[11]; //L
+    request['fin'] = row[12]; //M
+    request['finAck'] = row[13]; //N
+    request['plansAck'] = row[14]; //O
+    request['nationalityStatus']; //Deprecated
+    request['isEmailSent'] = row[15]; //P
+    request['reminderEmailSentTo'] = row[16]; //Q
     if (request['input'] == 'Y') {
       request['decision'] = 'Approved';
     }
@@ -165,6 +165,7 @@ function sendReminders(owners) {
   for (i in owners) {
     var owner = owners[i];
     if (owner['reminder']) {
+      Logger.log(owner['name']+'; '+owner['reminder'])
       var d = new Date();
       var currentDate = d.toLocaleDateString(); //"December 19, 2014" for instance  
       var currentTime = d.toLocaleTimeString(); // "12:35 PM", for instance

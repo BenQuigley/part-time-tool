@@ -1,6 +1,11 @@
 function every_two_hours() {
   var data = readData();
   var reqs = buildRequests(data);
+  for (i in reqs)
+  {
+    var req = reqs[i];
+    Logger.log(req['isEmailSent'])
+  }
   action(reqs, false);
 }
 
@@ -8,8 +13,8 @@ function every_two_hours() {
 function every_day() {
   var data = readData();
   var reqs = buildRequests(data);
-  var issTeam = action(reqs, true);
-  sendReminders(issTeam);
+  var team = action(reqs, true);
+  sendReminders(team);
 }
 
 
@@ -34,21 +39,22 @@ function buildRequests(rows)
     if (rows[i][2] == ''){continue;}
     var row = rows[i];    
     var request = {}
-    request['input'] = row[0];
-    request['notes'] = row[1];
-    request['applicationDate'] = row[2];
-    request['username'] = row[3];
-    request['userID'] = row[4];
-    request['usersName'] = row[5];
-    request['creditHours'] = row[6];
-    request['term'] = row[7];
-    request['SAPAck'] = row[11];
-    request['fin'] = row[12];
-    request['finAck'] = row[13];
-    request['plansAck'] = row[14];
-    request['nationalityStatus'] = row[15];
-    request['isEmailSent'] = row[16];
-    request['reminderEmailSentTo'] = row[17];
+    request['input'] = row[0]; //A
+    request['notes'] = row[1]; //B
+    request['applicationDate'] = row[2]; //C
+    request['username'] = row[3]; //D
+    request['userInitial'] = row[3].slice(1, 2);
+    request['userID'] = row[4]; //E
+    request['usersName'] = row[5]; //F
+    request['creditHours'] = row[6]; //G
+    request['term'] = row[7]; //H
+    request['SAPAck'] = row[11]; //L
+    request['fin'] = row[12]; //M
+    request['finAck'] = row[13]; //N
+    request['plansAck'] = row[14]; //O
+    request['nationalityStatus']; // Deprecated
+    request['isEmailSent'] = row[15]; //P
+    request['reminderEmailSentTo'] = row[16]; //Q
     if (request['input'] == 'Y') {
       request['decision'] = 'Approved';
     }
@@ -91,18 +97,18 @@ function action(requests, remindersMode) {
       var d = new Date();
       var currentDate = d.toLocaleDateString(); //"December 19, 2014" for instance  
       var currentTime = d.toLocaleTimeString(); // "12:35 PM", for instance
-      sheet.getRange(startRow+parseInt(i, 10), 17).setValue(req['decision']+' - sent to '+req['username']+' on ' +
+      sheet.getRange(startRow+parseInt(i, 10), 16).setValue(req['decision']+' - sent to '+req['username']+' on ' +
                                                             currentDate + ' at ' + currentTime);
     }
     else if (remindersMode)
     {
       if (req['decision'] == '' && req['reminderEmailSentTo'] == '') 
       {
-      sheet.getRange(startRow + parseInt(i, 10), 18).setValue(req['owner']+
+        sheet.getRange(startRow + parseInt(i, 10), 17).setValue(req['owner']+
                                                               ' on '+currentDate+
                                                               ' at '+currentTime);
-      Logger.log('Sending reminder to'+req['owner']);
-      owners[req['owner']]['reminder'] = true;
+        Logger.log('Sending reminder to'+req['owner']);
+        owners[req['owner']]['reminder'] = true;
       }
     }
     else 
@@ -124,13 +130,13 @@ function writeResponse(record) {
       "enrollment@berklee.edu, bursar@berklee.edu",
     }
     // Prevents sending duplicate emails and emails to non-approved rows. 
-    var message = 'Student ID# '+request['userID']+
-                '\n\nDear '+request['usersName']+',\n\nYour request for part-time status ('+
-                request['creditHours']+' credit-hours) beginning in '+request['term']+
+    var message = 'Student ID# '+record['userID']+
+                '\n\nDear '+record['usersName']+',\n\nYour request for part-time status ('+
+                record['creditHours']+' credit-hours) beginning in '+record['term']+
                 ' has been approved.\n\nAs part of your request for part-time status you agreed to or acknowledged '+
-                'the following:\n\n1. Satisfactory Academic Progress (SAP) Policy acknowledgment: '+request['SAPAck']+
-                '\n\n2. Stated financial aid status: '+request['fin']+'\n\n3. Statement of financial responsibility: '+
-                request['finAck']+'\n\n4. Notification when plans change: '+request['plansAck']+'\n\n5. Berklee status: '+
+                'the following:\n\n1. Satisfactory Academic Progress (SAP) Policy acknowledgment: '+record['SAPAck']+
+                '\n\n2. Stated financial aid status: '+record['fin']+'\n\n3. Statement of financial responsibility: '+
+                record['finAck']+'\n\n4. Notification when plans change: '+record['plansAck']+'\n\n5. Berklee status: '+
                 'U.S. citizen or permanent resident.\n\nIf you anticipate a problem fulfilling any of the above, please '+
                 'contact the appropriate department immediately.\n\nBest wishes for a successful semester!\n\nMichael '+
                 'Hagerty\n\nRegistrar | Berklee College of Music\nEnrollment Division\n1140 Boylston Street MS-921-OREG\n'+
@@ -143,10 +149,10 @@ function writeResponse(record) {
       bcc: 'enrollment@berklee.edu',
     }
     var subject = "Part-Time Request Denied";
-    var message = 'Student ID# '+request['userID']+'\n\nDear '+
-          request['usersName']+',\n\nYour request for part-time status '+
-          'for the '+request['term']+' semester was not approved. This decision '+
-          'was based on the following: \n\n'+request['notes']+'\n\nIf you '+
+    var message = 'Student ID# '+record['userID']+'\n\nDear '+
+          record['usersName']+',\n\nYour request for part-time status '+
+          'for the '+record['term']+' semester was not approved. This decision '+
+          'was based on the following: \n\n'+record['notes']+'\n\nIf you '+
           'believe that your application was rejected in error or if you require '+
           'further information, please stop by the Office of the Registrar '+
           '(921 BOYL, Suite 120) or email us at (registrar@berklee.edu).\n\nBest '+
