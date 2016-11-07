@@ -73,6 +73,7 @@ function buildRequests(rows)
 
 
 function action(requests, remindersMode) {
+  var startRow = 2; // First row of data to process
   var sheet = SpreadsheetApp.getActiveSheet();
   var owners = {
     'Sarah': {
