@@ -73,7 +73,7 @@ function buildRequests(rows)
 
 
 function action(requests, remindersMode) {
-  var startRow = 2; // First row of data to process
+  var startRow = 2;
   var sheet = SpreadsheetApp.getActiveSheet();
   var owners = {
     'Sarah': {
@@ -95,12 +95,15 @@ function action(requests, remindersMode) {
       var d = new Date();
       var currentDate = d.toLocaleDateString(); // "December 19, 2014" for instance  
       var currentTime = d.toLocaleTimeString(); // "12:35 PM", for instance
-      sheet.getRange(startRow+parseInt(i, 10), 17).setValue(req['decision']+' - sent to '+req['username']+' on ' +
+      sheet.getRange(startRow + parseInt(i, 10), 16).setValue(req['decision']+' - sent to '+req['username']+' on ' +
                                                             currentDate + ' at ' + currentTime);
     }
     else if (remindersMode){
-      if (req['decision'] == '' && req['reminderEmailSentTo'] == '') {
-        sheet.getRange(startRow + parseInt(i, 10), 18).setValue(request['owner']+
+      if (req['input'] == '' && req['reminderEmailSentTo'] == '') {
+        var d = new Date();
+        var currentDate = d.toLocaleDateString(); // "December 19, 2014" for instance  
+        var currentTime = d.toLocaleTimeString(); // "12:35 PM", for instance
+        sheet.getRange(startRow + parseInt(i, 10), 17).setValue(request['owner']+
                                                                 ' on '+currentDate+
                                                                 ' at '+currentTime);
         Logger.log('Sending reminder to'+req['owner']);

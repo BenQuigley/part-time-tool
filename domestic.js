@@ -4,7 +4,6 @@ function every_two_hours() {
   for (i in reqs)
   {
     var req = reqs[i];
-    Logger.log(req['isEmailSent'])
   }
   action(reqs, false);
 }
@@ -102,8 +101,11 @@ function action(requests, remindersMode) {
     }
     else if (remindersMode)
     {
-      if (req['decision'] == '' && req['reminderEmailSentTo'] == '') 
+      if (req['input'] == '' && req['reminderEmailSentTo'] == '') 
       {
+        var d = new Date();
+        var currentDate = d.toLocaleDateString(); //"December 19, 2014" for instance  
+        var currentTime = d.toLocaleTimeString(); // "12:35 PM", for instance
         sheet.getRange(startRow + parseInt(i, 10), 17).setValue(req['owner']+
                                                               ' on '+currentDate+
                                                               ' at '+currentTime);
@@ -170,6 +172,7 @@ function sendReminders(owners) {
   for (i in owners) {
     var owner = owners[i];
     if (owner['reminder']) {
+      Logger.log(owner['email'])
       var d = new Date();
       var currentDate = d.toLocaleDateString(); //"December 19, 2014" for instance  
       var currentTime = d.toLocaleTimeString(); // "12:35 PM", for instance
